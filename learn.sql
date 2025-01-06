@@ -96,14 +96,13 @@ SELECT LEFT(salary,1) FROM mysalary
 SELECT * FROM myemployee
 SELECT fname,lname ,CONCAT(UPPER(LEFT(fname,1)),LOWER(SUBSTRING(fname,2,LEN(fname)))) AS 'NEW COL' FROM myemployee
 
-
 ---example etl
-
 CREATE TABLE products(
 prodid INT,
 prodname varchar(20),
 prodprice INT
 )
+
 INSERT INTO products VALUES
 (1,'CAR',10),
 (2,'DOG',20),
@@ -115,12 +114,81 @@ prodid INT,
 prodname varchar(20),
 totalprodprice INT
 )
+
 TRUNCATE TABLE showallproducts
-
 INSERT INTO showallproducts(prodid,prodname,totalprodprice)
-
 SELECT prodid,MAX(prodname),SUM(prodprice) AS 'allprodprice' FROM products
-
 GROUP BY prodid;
-
 SELECT * FROM showallproducts
+
+--Learn advanced SQL--
+
+SELECT TOP (1000) [id]
+      ,[fname]
+      ,[lname]
+  FROM [mytest].[dbo].[testable]
+
+CREATE VIEW ViewTest
+AS
+SELECT fname FROM [mytest].[dbo].[testable]
+WHERE fname LIKE 'moataz'
+
+SELECT * FROM ViewTest
+
+SELECT TOP (1000) [staff_id]
+      ,[first_name]
+      ,[last_name]
+      ,[email]
+      ,[phone]
+      ,[active]
+      ,[store_id]
+      ,[manager_id]
+  FROM [BikeStores ].[sales].[staffs]
+
+
+DROP view COUNTSOTREID
+
+CREATE VIEW COUNTSOTREID
+AS 
+SELECT  [brand_id],[brand_name],[category_id],[category_name] 
+FROM [production].[brands] a inner join [production].[categories] b
+ON a.brand_id = b.category_id
+WHERE brand_id = category_id
+
+SELECT brand_name FROM COUNTSOTREID
+UPDATE COUNTSOTREID
+SET brand_name ='Electra'
+WHERE brand_name LIKE 'Electra New'
+SELECT * FROM COUNTSOTREID
+
+
+CREATE TRIGGER triggerdemo
+ON [production].[products].[model_year]
+AFTER INSERT
+AS
+BEGIN
+PRINT 'NOT ALLOWED'
+ROLLBACK TRANSACTION
+END
+GO
+
+CREATE PROCEDURE mytestpro
+@parastocks INT
+AS
+SET NOCOUNT ON
+SELECT * FROM [production].[stocks]
+WHERE quantity = @parastocks
+
+EXEC mytestpro @parastocks = '0'
+
+DROP PROC mytestpro
+
+
+CREATE FUNCTION SQ(@num INT)
+RETURNS INT
+AS
+BEGIN
+	RETURN @num * 5
+END
+
+SELECT dbo.sq(5) AS square;
